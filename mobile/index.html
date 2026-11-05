@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Election Quest — แนวตั้ง</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #102435; color: #f8f5eb; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; overscroll-behavior: none; }
+    main { position: absolute; inset: 0; height: 100vh; height: 100dvh; box-sizing: border-box; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); background: #162e42; }
+    #game { position: relative; width: 100%; height: 100%; }
+    canvas { display: block; width: 100%; height: 100%; touch-action: none; outline: none; }
+    #loading { position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; gap: 12px; padding: 18px; text-align: center; }
+    #loading[hidden] { display: none; }
+    progress { width: min(65%, 300px); accent-color: #f2cb74; }
+    h1, p { margin: 0; }
+    h1 { color: #f2cb74; font-size: clamp(20px, 4vw, 36px); }
+  </style>
+</head>
+<body>
+  <main>
+    <div id="game">
+    <canvas id="unity-canvas" tabindex="0" aria-label="เกม Election Quest"></canvas>
+    <section id="loading" aria-live="polite">
+      <h1>Election Quest</h1>
+      <p id="status">กำลังโหลดหน่วยเลือกตั้ง</p>
+      <progress id="progress" max="1" value="0" aria-label="ความคืบหน้าการโหลด"></progress>
+    </section>
+    </div>
+  </main>
+  <script>
+    const canvas = document.getElementById('unity-canvas');
+    const loading = document.getElementById('loading');
+    const status = document.getElementById('status');
+    const progress = document.getElementById('progress');
+    function showError(error) {
+      status.textContent = 'เปิดเกมไม่สำเร็จ ลองโหลดหน้าเว็บอีกครั้ง';
+      progress.hidden = true;
+      console.error(error);
+    }
+
+    const loader = document.createElement('script');
+    loader.src = 'Build/WebPortrait.loader.js';
+    loader.onerror = showError;
+    loader.onload = () => {
+      createUnityInstance(canvas, {
+        dataUrl: 'Build/WebPortrait.data.unityweb',
+        frameworkUrl: 'Build/WebPortrait.framework.js.unityweb',
+        codeUrl: 'Build/WebPortrait.wasm.unityweb',
+        streamingAssetsUrl: 'StreamingAssets',
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
+        companyName: "DefaultCompany",
+        productName: "ElectionQuest",
+        productVersion: "0.1.0"
+      }, value => { progress.value = value; })
+        .then(() => { loading.hidden = true; })
+        .catch(showError);
+    };
+    document.body.appendChild(loader);
+  </script>
+</body>
+</html>
