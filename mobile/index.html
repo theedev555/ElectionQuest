@@ -33,6 +33,8 @@
     const loading = document.getElementById('loading');
     const status = document.getElementById('status');
     const progress = document.getElementById('progress');
+    const buildVersion = '8df3b5247da634b';
+    const buildUrl = name => 'Build/' + name + '?v=' + buildVersion;
     function showError(error) {
       status.textContent = 'เปิดเกมไม่สำเร็จ ลองโหลดหน้าเว็บอีกครั้ง';
       progress.hidden = true;
@@ -40,13 +42,13 @@
     }
 
     const loader = document.createElement('script');
-    loader.src = 'Build/WebPortrait.loader.js';
+    loader.src = buildUrl('WebPortrait.loader.js');
     loader.onerror = showError;
     loader.onload = () => {
       createUnityInstance(canvas, {
-        dataUrl: 'Build/WebPortrait.data.unityweb',
-        frameworkUrl: 'Build/WebPortrait.framework.js.unityweb',
-        codeUrl: 'Build/WebPortrait.wasm.unityweb',
+        dataUrl: buildUrl('WebPortrait.data.unityweb'),
+        frameworkUrl: buildUrl('WebPortrait.framework.js.unityweb'),
+        codeUrl: buildUrl('WebPortrait.wasm.unityweb'),
         streamingAssetsUrl: 'StreamingAssets',
         devicePixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
         companyName: "DefaultCompany",
